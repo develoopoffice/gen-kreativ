@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+/*
+ * Gen Kreativ Production — design tokens
+ * Colors, fonts and reusable utilities live here so the whole site can be
+ * re-skinned from one place. Swap the hex values to rebrand.
+ */
+@theme {
+  /* Surfaces */
+  --color-ink: #08080a; /* page background base */
+  --color-ink-soft: #101014;
+  --color-surface: #17171d; /* cards */
+  --color-surface-2: #20202a; /* raised cards */
+
+  /* Brand */
+  --color-primary: #FC7138; /* signature orange */
+  --color-primary-strong: #e24b16;
+  --color-primary-soft: #ff7a45;
+  --color-sun: #ffc83d; /* yellow accent */
+  --color-teal: #1ec8b0; /* teal / "scientific cinema" accent */
+  --color-grape: #7c5cff; /* purple accent */
+}
+
+@theme inline {
+  --font-sans: var(--font-poppins);
+  --font-display: var(--font-poppins);
+  --font-hand: var(--font-caveat);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: #ededed;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  /* Centered page gutter shared by every section */
+  .container-page {
+    @apply mx-auto w-full max-w-[1240px] px-5 sm:px-8 lg:px-12;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbars on horizontal carousels while keeping scroll behaviour */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Faint perspective grid used behind the "core services" section */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Tilted floor-style grid spanning the core-services -> partners ->
+     start-story block. Perspective(rotateX) gives the vanishing-point look,
+     rotate(-7deg) matches the hand-tilted graphics in those sections. */
+  .bg-grid-perspective {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 56px 56px;
+    transform: perspective(700px) rotateX(55deg) rotate(-7deg);
+    transform-origin: center;
+    /* Idle "walking into the scene" loop — one tile per cycle, so the repeat
+       is seamless. background-position moves in the grid's own (pre-transform)
+       space; the rotateX squashes vertical motion, so the duration is kept
+       short for the flow to stay visible. */
+    animation: grid-flow 1.6s linear infinite;
+  }
+
+  @keyframes grid-flow {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: 0 56px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-grid-perspective {
+      animation: none;
+    }
+  }
+
+  /* Hand-painted highlight behind a word (approximates the brush graphics in
+     the mockups — replace with a real brush asset later if desired). */
+  .brush {
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    padding: 0.05em 0.35em;
+    border-radius: 0.25rem 0.6rem 0.3rem 0.55rem;
+    transform: rotate(-1.5deg);
+    display: inline-block;
+  }
+}
