@@ -1,47 +1,72 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { AssetImage } from "@/components/ui/AssetImage";
 import { cn } from "@/lib/utils";
 import type { ImageAsset } from "@/types";
 
+/** How long each image stays in the centre before advancing (ms). */
+const INTERVAL = 3000;
+/** Vertical gap between slots, as a share of an image's own height. */
+const SPREAD = 80;
+
 /**
- * Overlapping vertical stack (coverflow-style): the middle image is largest and
- * sits in front at full opacity, while the images above and below are narrower,
- * dimmer, and tucked partly behind it. The centre item's negative vertical
- * margins pull its neighbours in so they overlap. The stack is kept compact
- * (narrow, centred) inside a height-capped, vertically scrollable viewport.
+ * Vertical coverflow carousel: the three images sit in a stack with one in the
+ * centre — enlarged and at full opacity — and the others clearly visible above
+ * and below but smaller and dimmer. The centre slot advances on a timer so every
+ * image takes its turn at 100% opacity; clicking a neighbour jumps to it.
  */
 export function VerticalGallery({ media }: { media: ImageAsset[] }) {
-  const middle = Math.floor(media.length / 2);
+  const count = media.length;
+  const [active, setActive] = useState(count > 1 ? 1 : 0);
+
+  useEffect(() => {
+    if (count <= 1) return;
+    const id = setInterval(() => setActive((a) => (a + 1) % count), INTERVAL);
+    return () => clearInterval(id);
+  }, [count]);
 
   return (
-    <div className="scrollbar-hide ml-auto max-h-[22rem] max-w-sm overflow-y-auto py-6">
-      <div className="relative flex flex-col items-center">
-        {media.map((image, i) => {
-          const dist = Math.abs(i - middle);
-          const isCenter = dist === 0;
-          return (
-            <div
-              key={image.src ?? i}
-              className={cn(
-                "w-full",
-                isCenter
-                  ? "z-20 -my-[8%] shadow-2xl shadow-black/50 ring-1 ring-white/10"
-                  : "z-10",
-              )}
-              style={{
-                maxWidth: isCenter ? "100%" : `${100 - dist * 22}%`,
-                opacity: isCenter ? 1 : Math.max(0.4, 1 - dist * 0.45),
-              }}
-            >
-              <AssetImage
-                image={image}
-                className="aspect-video w-full rounded-xl"
-                imgClassName="object-cover"
-                sizes="(min-width: 1024px) 40vw, 90vw"
-              />
-            </div>
-          );
-        })}
-      </div>
+    <div className="relative ml-auto h-[24rem] w-full max-w-sm">
+      {media.map((image, i) => {
+        // Signed distance from the centre, wrapped into [-half, +half] so one
+        // neighbour always sits above the active item and one below it.
+        let off = i - active;
+        if (off > count / 2) off -= count;
+        if (off < -count / 2) off += count;
+        const dist = Math.abs(off);
+        const isActive = dist === 0;
+
+        return (
+          <button
+            type="button"
+            key={image.src ?? i}
+            onClick={() => setActive(i)}
+            aria-label={`Show image ${i + 1} of ${count}`}
+            aria-current={isActive}
+            className={cn(
+              "absolute left-1/2 top-1/2 w-full rounded-xl transition-all duration-500 ease-out",
+              isActive
+                ? "z-20 cursor-default shadow-2xl shadow-black/50 ring-1 ring-white/10"
+                : "z-10 cursor-pointer",
+            )}
+            style={{
+              opacity: isActive ? 1 : Math.max(0.4, 1 - dist * 0.45),
+              transform: `translate(-50%, calc(-50% + ${off * SPREAD}%)) scale(${
+                isActive ? 1 : 0.8
+              })`,
+            }}
+          >
+            <AssetImage
+              image={image}
+              className="aspect-video w-full rounded-xl"
+              imgClassName="object-cover"
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              loading="eager"
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }
