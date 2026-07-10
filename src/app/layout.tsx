@@ -21,7 +21,7 @@ const caveat = Caveat({
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} ${siteConfig.nameSuffix} — Where Science Meets Visual Storytelling`,
+    default: `${siteConfig.name} ${siteConfig.nameSuffix}`,
     template: `%s — ${siteConfig.name} ${siteConfig.nameSuffix}`,
   },
   description: siteConfig.description,
