@@ -1,4 +1,5 @@
 import { AssetImage } from "@/components/ui/AssetImage";
+import { parseRichText } from "@/lib/richtext";
 import { cn } from "@/lib/utils";
 import type { NewsItem } from "@/types";
 
@@ -32,7 +33,7 @@ export function NewsRow({ item }: { item: NewsItem }) {
               key={i}
               className="text-justify text-sm leading-relaxed text-white/75 sm:text-[0.95rem]"
             >
-              {paragraph}
+              {parseRichText(paragraph)}
             </p>
           ))}
         </div>

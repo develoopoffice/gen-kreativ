@@ -12,6 +12,8 @@ interface AssetImageProps {
   /** next/image `sizes` hint for responsive loading. */
   sizes?: string;
   priority?: boolean;
+  /** Set "eager" for carousel slides that must not fetch/decode mid-animation. */
+  loading?: "eager" | "lazy";
 }
 
 /**
@@ -27,6 +29,7 @@ export function AssetImage({
   imgClassName = "object-cover",
   sizes = "100vw",
   priority,
+  loading,
 }: AssetImageProps) {
   const hasSrc = Boolean(image.src && image.src.trim() !== "");
 
@@ -39,6 +42,7 @@ export function AssetImage({
           fill
           sizes={sizes}
           priority={priority}
+          loading={loading}
           className={imgClassName}
         />
       ) : (

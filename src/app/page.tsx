@@ -5,8 +5,10 @@ import { CoreServices } from "@/components/sections/home/CoreServices";
 import { PartnersClients } from "@/components/sections/home/PartnersClients";
 import { StartStory } from "@/components/sections/home/StartStory";
 import { Reveal } from "@/components/ui/Reveal";
+import { getProjects } from "@/lib/content";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const projects = await getProjects();
   return (
     <>
       <Hero />
@@ -14,7 +16,7 @@ export default function HomePage() {
         <AboutUs />
       </Reveal>
       <Reveal>
-        <RecentProjects />
+        <RecentProjects projects={projects} />
       </Reveal>
 
       <div className="relative overflow-hidden bg-[linear-gradient(180deg,#0e1410_0%,#14241d_20%,#0c1411_38%,#241a13_55%,#0d1a16_75%,#0a0f0d_100%)]">

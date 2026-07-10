@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(curl -s http://localhost:3000/)",
-      "Bash(curl -s \"http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__1ost0uz._.css\")"
+      "Bash(curl -s \"http://localhost:3000/_next/static/chunks/%5Broot-of-the-server%5D__1ost0uz._.css\")",
+      "Bash(openssl rand *)",
+      "Bash(echo \"SESSION_SECRET=$\\(openssl rand -base64 32\\)\")",
+      "Bash(echo \"ADMIN_PASSWORD=GKP-$\\(openssl rand -hex 6\\)\")"
     ]
   }
 }

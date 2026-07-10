@@ -5,19 +5,36 @@ import type { ReactNode } from "react";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { AssetImage } from "@/components/ui/AssetImage";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { recentProjects } from "@/data/projects";
 import { cn } from "@/lib/utils";
+import type { Project } from "@/types";
 
-export function RecentProjects() {
+export function RecentProjects({ projects }: { projects: Project[] }) {
+  const recentProjects = projects;
   const trackRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const settleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Start on the second item so the featured card sits centred (as in the design).
   const [active, setActive] = useState(Math.min(1, recentProjects.length - 1));
+  const activeRef = useRef(active);
   // Text label lags one tick behind `active` and crossfades in, instead of
   // flashing through every intermediate slide while the scroll is in motion.
   const [labelActive, setLabelActive] = useState(active);
   const [labelVisible, setLabelVisible] = useState(true);
+
+  // Update the active slide and crossfade the title/subtitle towards it once
+  // the scroll settles, instead of flashing through every intermediate slide.
+  const changeActive = (idx: number) => {
+    if (activeRef.current === idx) return;
+    activeRef.current = idx;
+    setActive(idx);
+
+    setLabelVisible(false);
+    if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
+    settleTimeoutRef.current = setTimeout(() => {
+      setLabelActive(idx);
+      setLabelVisible(true);
+    }, 150);
+  };
 
   const centerSlide = (idx: number, behavior: ScrollBehavior) => {
     const track = trackRef.current;
@@ -31,32 +48,18 @@ export function RecentProjects() {
 
   const goTo = (i: number) => {
     const idx = Math.max(0, Math.min(recentProjects.length - 1, i));
-    setActive(idx);
+    changeActive(idx);
     centerSlide(idx, "smooth");
   };
 
   // Centre the initial slide on mount (no smooth scroll).
   useEffect(() => {
     centerSlide(active, "auto");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Once the active slide settles, crossfade the title/subtitle to it instead
-  // of flashing through every intermediate slide while the scroll is moving.
-  useEffect(() => {
-    if (active === labelActive) return;
-
-    setLabelVisible(false);
-    if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
-    settleTimeoutRef.current = setTimeout(() => {
-      setLabelActive(active);
-      setLabelVisible(true);
-    }, 150);
-
     return () => {
       if (settleTimeoutRef.current) clearTimeout(settleTimeoutRef.current);
     };
-  }, [active, labelActive]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Keep the emphasis in sync when the user scrolls/swipes manually.
   const handleScroll = () => {
@@ -74,7 +77,7 @@ export function RecentProjects() {
         nearest = i;
       }
     });
-    setActive(nearest);
+    changeActive(nearest);
   };
 
   const labelProject = recentProjects[labelActive];
@@ -110,37 +113,40 @@ export function RecentProjects() {
                 i === active ? "z-20" : "z-10",
               )}
             >
-              {i === active && project.href ? (
-                <a
-                  href={project.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Watch ${project.title}`}
-                  className="block w-full scale-100 opacity-100 transition-all duration-300"
-                >
-                  <AssetImage
-                    image={project.image}
-                    className="aspect-video w-full"
-                    sizes="(min-width: 1024px) 62vw, 92vw"
+              {/* The image lives in a stable wrapper and the link/button is an
+                  overlay, so toggling `active` never remounts the <img> — a
+                  remount forces a mid-scroll re-decode that stutters with
+                  remote (database) images. Eager loading keeps offscreen
+                  slides from fetching/decoding during the swipe itself. */}
+              <div
+                className={cn(
+                  "relative w-full transition-all duration-300",
+                  i === active ? "scale-100 opacity-100" : "scale-[0.82] opacity-40",
+                )}
+              >
+                <AssetImage
+                  image={project.image}
+                  className="aspect-video w-full"
+                  sizes="(min-width: 1024px) 62vw, 92vw"
+                  loading="eager"
+                />
+                {i === active && project.href ? (
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Watch ${project.title}`}
+                    className="absolute inset-0"
                   />
-                </a>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => goTo(i)}
-                  aria-label={`Show ${project.title}`}
-                  className={cn(
-                    "block w-full transition-all duration-300",
-                    i === active ? "scale-100 opacity-100" : "scale-[0.82] opacity-40",
-                  )}
-                >
-                  <AssetImage
-                    image={project.image}
-                    className="aspect-video w-full"
-                    sizes="(min-width: 1024px) 62vw, 92vw"
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => goTo(i)}
+                    aria-label={`Show ${project.title}`}
+                    className="absolute inset-0"
                   />
-                </button>
-              )}
+                )}
+              </div>
             </div>
           ))}
         </div>

@@ -1,4 +1,37 @@
-import type { CoreService, ServiceBlock, ServicePackage } from "@/types";
+import type { CoreService, ImageAsset, ServiceBlock, ServicePackage } from "@/types";
+
+/** Build a numbered image list from a folder under /public/assets/services. */
+function folderImages(
+  folder: string,
+  files: string[],
+  altPrefix: string,
+): ImageAsset[] {
+  return files.map((file, i) => ({
+    src: `/assets/services/${folder}/${file}`,
+    alt: `${altPrefix} ${i + 1}`,
+  }));
+}
+
+const scienceDocs = folderImages(
+  "science-documentation",
+  ["1.png", "2.png", "3.png"],
+  "Science documentation",
+);
+const eventDocs = folderImages(
+  "event-documentation",
+  ["1.png", "2.png", "3.png"],
+  "Event documentation",
+);
+const jtbbPosts = folderImages(
+  "jtbb",
+  ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png"],
+  "@jtbb.ugm post",
+);
+const igfPosts = folderImages(
+  "igfgenome",
+  ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.jpg"],
+  "@igf.genome post",
+);
 
 /** The 4 pills under "4 CORE VISUAL SERVICES" on the home page. */
 export const coreServices: CoreService[] = [
@@ -96,30 +129,18 @@ export const serviceBlocks: ServiceBlock[] = [
       "We translate scientific research into clear, compelling stories, accurate, and engaging. We help science communication for brands, researcher, and media.",
     packages: ["BASIC", "PREMIUM", "ADVANCED"],
     mostPopular: "PREMIUM",
-    media: [
-      {
-        src: "/assets/services/science-documentation.png",
-        alt: "Science documentation feature",
-        label: "Science Documentary",
-      },
-    ],
+    media: scienceDocs,
+    scroller: true,
   },
   {
     id: "socmed-management",
     title: "Socmed Management",
     description:
       "Strategic social media management that turns scientific credibility into audience growth and engagement.",
-    media: [
-      {
-        src: "/assets/services/jtbb-ugm.png",
-        alt: "@jtbb.ugm instagram feed",
-        label: "@jtbb.ugm",
-      },
-      {
-        src: "/assets/services/igf-ignome.png",
-        alt: "@igf.genome instagram feed",
-        label: "@igf.genome",
-      },
+    media: [],
+    feeds: [
+      { label: "@jtbb.ugm", images: jtbbPosts },
+      { label: "@igf.genome", images: igfPosts },
     ],
   },
   {
@@ -129,13 +150,8 @@ export const serviceBlocks: ServiceBlock[] = [
       "We capture the key moments, atmosphere, and human stories behind your events through professional photo and video documentation.",
     packages: ["BASIC", "PREMIUM", "ADVANCED"],
     mostPopular: "PREMIUM",
-    media: [
-      {
-        src: "/assets/services/event-documentation.png",
-        alt: "Research Day 2025 event documentation",
-        label: "Event Documentation",
-      },
-    ],
+    media: eventDocs,
+    scroller: true,
   },
   {
     id: "customizable-services",

@@ -2,8 +2,14 @@ import { Fragment } from "react";
 import { AssetImage } from "@/components/ui/AssetImage";
 import { Button } from "@/components/ui/Button";
 import { siteConfig } from "@/data/site";
-import { cn } from "@/lib/utils";
-import type { ImageAsset, PackageTier, ServiceBlock as ServiceBlockType } from "@/types";
+import type {
+  ImageAsset,
+  PackageTier,
+  ServiceBlock as ServiceBlockType,
+  ServiceFeed,
+} from "@/types";
+import { OptionsWheel } from "./OptionsWheel";
+import { VerticalGallery } from "./VerticalGallery";
 
 export function ServiceBlock({ block }: { block: ServiceBlockType }) {
   return (
@@ -42,12 +48,14 @@ export function ServiceBlock({ block }: { block: ServiceBlockType }) {
       {/* Media */}
       <div>
         {block.optionsList ? (
-          <OptionsList
+          <OptionsWheel
             options={block.optionsList}
             highlighted={block.highlightedOption}
           />
-        ) : block.id === "socmed-management" ? (
-          <SocialFeeds media={block.media} />
+        ) : block.feeds ? (
+          <SocialFeeds feeds={block.feeds} />
+        ) : block.scroller ? (
+          <VerticalGallery media={block.media} />
         ) : (
           <Gallery media={block.media} />
         )}
@@ -87,45 +95,32 @@ function PackageRow({
   );
 }
 
-function OptionsList({
-  options,
-  highlighted,
-}: {
-  options: string[];
-  highlighted?: string;
-}) {
+/**
+ * Instagram feeds for the socmed block. Each feed is a horizontally-scrollable
+ * strip showing ~3.5 portrait photos at a time.
+ */
+function SocialFeeds({ feeds }: { feeds: ServiceFeed[] }) {
   return (
-    <ul className="space-y-3 text-center lg:text-right">
-      {options.map((option) => (
-        <li
-          key={option}
-          className={cn(
-            "text-xl font-bold sm:text-2xl",
-            option === highlighted ? "text-white" : "text-white/25",
-          )}
-        >
-          {option}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** Instagram-style strips for the social media management block. */
-function SocialFeeds({ media }: { media: ImageAsset[] }) {
-  return (
-    <div className="space-y-5">
-      {media.map((feed) => (
-        <div key={feed.label ?? feed.alt}>
-          <p className="mb-2 text-right text-sm font-semibold text-white/80">
-            {feed.label}
-          </p>
-          <AssetImage
-            image={feed}
-            className="aspect-[12/5] w-full"
-            imgClassName="object-contain object-right"
-            sizes="(min-width: 1024px) 70vw, 100vw"
-          />
+    <div className="space-y-6">
+      {feeds.map((feed) => (
+        <div key={feed.label}>
+          <p className="mb-2.5 text-sm font-semibold text-white/80">{feed.label}</p>
+          <div className="scrollbar-hide flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1">
+            {feed.images.map((image, i) => (
+              <div
+                key={image.src ?? i}
+                className="shrink-0 snap-start"
+                style={{ flexBasis: "calc((100% - 3 * 0.75rem) / 3.5)" }}
+              >
+                <AssetImage
+                  image={image}
+                  className="aspect-[4/5] w-full rounded-lg"
+                  imgClassName="object-cover"
+                  sizes="(min-width: 1024px) 20vw, 30vw"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       ))}
     </div>

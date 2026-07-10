@@ -84,6 +84,12 @@ export interface ServicePackage {
   addOns?: string[];
 }
 
+/** One Instagram feed for the socmed block: a label plus a strip of photos. */
+export interface ServiceFeed {
+  label: string;
+  images: ImageAsset[];
+}
+
 export interface ServiceBlock {
   id: string;
   title: string;
@@ -93,6 +99,10 @@ export interface ServiceBlock {
   mostPopular?: PackageTier;
   /** Gallery images shown beside the copy. */
   media: ImageAsset[];
+  /** Render `media` as a vertical scroller with the centre item highlighted. */
+  scroller?: boolean;
+  /** Instagram feeds for the socmed block; each renders as a horizontal photo strip. */
+  feeds?: ServiceFeed[];
   /** Used by "Customizable Services": a stacked list of offerings instead of media. */
   optionsList?: string[];
   highlightedOption?: string;
