@@ -1,7 +1,7 @@
 # Gen Kreativ Production — Website
 
 Marketing site for **Gen Kreativ Production**, a science-communication / visual
-storytelling production house. Built from the design mockups in
+storytelling production house. Built from the design mockups in 
 [`docs/design`](docs/design).
 
 > **Status:** all imagery is placeholder by design. Components and layout are
