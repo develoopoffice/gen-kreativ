@@ -55,9 +55,12 @@ export function AboutUs() {
           </BarHeading>
 
           <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg lg:text-xl">
-            We are a science communication production house weaving scientmindsific
-            values into storytelling that inspires curiosity, educates ,
-            and moves people.
+            We are a{" "}
+            <strong className="font-bold text-white">
+              science communication production house
+            </strong>{" "}
+            weaving scientific values into storytelling that inspires curiosity,
+            educates minds, and moves people.
           </p>
 
           <h3 className="mt-8 text-2xl font-bold text-sun drop-shadow-[0_0_12px_rgba(255,193,77,0.8)] sm:text-3xl lg:text-4xl">
