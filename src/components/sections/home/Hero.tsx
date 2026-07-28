@@ -3,11 +3,10 @@ import { LogoMark } from "@/components/layout/Logo";
 import { siteConfig } from "@/data/site";
 
 /**
- * Hero background video. Drop a file at /public/assets/hero/hero.mp4 and set
- * this to "/assets/hero/hero.mp4" to enable the looping video background.
- * While empty, a cinematic gradient placeholder is shown instead.
+ * Hero background video, served from /public/assets/hero. Set this to "" to
+ * fall back to the cinematic gradient placeholder.
  */
-const heroVideoSrc = "";
+const heroVideoSrc = "/assets/hero/bg_hero_vid.mp4";
 
 export function Hero() {
   const hasVideo = Boolean(heroVideoSrc);
@@ -24,6 +23,8 @@ export function Hero() {
             muted
             loop
             playsInline
+            preload="auto"
+            aria-hidden
           />
         ) : (
           <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,#23202f,transparent_55%),radial-gradient(circle_at_75%_60%,#2a1a14,transparent_55%),linear-gradient(180deg,#0c0c11,#08080a)]" />

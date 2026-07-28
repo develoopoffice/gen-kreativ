@@ -1,13 +1,36 @@
+import { readdirSync } from "node:fs";
+import path from "node:path";
 import { FiChevronDown } from "react-icons/fi";
-import { AssetImage } from "@/components/ui/AssetImage";
 import { BarHeading } from "@/components/ui/SectionHeading";
+import { PhotoStack } from "@/components/ui/PhotoStack";
 import type { ImageAsset } from "@/types";
 
-const aboutImage: ImageAsset = {
-  src: "/assets/about/about-us-photo.png",
-  alt: "Gen Kreativ crew on a film production set",
-  label: "About Us Photo",
-};
+const ABOUT_DIR = path.join(process.cwd(), "public", "assets", "about");
+const IMAGE_FILE = /\.(png|jpe?g|webp|avif)$/i;
+
+/**
+ * Every photo in /public/assets/about, ordered by filename ("2.png" before
+ * "10.png"). Drop a file in that folder and it joins the stack — no code change.
+ * Read at build time, so the section stays a static server component.
+ */
+function getAboutPhotos(): ImageAsset[] {
+  let files: string[];
+  try {
+    files = readdirSync(ABOUT_DIR).filter((file) => IMAGE_FILE.test(file));
+  } catch {
+    return [];
+  }
+
+  return files
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+    .map((file, i) => ({
+      src: `/assets/about/${file}`,
+      alt: `Gen Kreativ crew on a film production set (${i + 1})`,
+      label: "About Us Photo",
+    }));
+}
+
+const aboutPhotos = getAboutPhotos();
 
 export function AboutUs() {
   return (
@@ -48,8 +71,8 @@ export function AboutUs() {
           </p>
         </div>
 
-        <AssetImage
-          image={aboutImage}
+        <PhotoStack
+          photos={aboutPhotos}
           className="aspect-[4/3] w-full"
           sizes="(min-width: 1024px) 40vw, 100vw"
         />
