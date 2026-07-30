@@ -35,7 +35,7 @@ export function StartStory() {
             </p>
             <div className="mt-8">
               <Button
-                href={`mailto:${siteConfig.contact.email}`}
+                href={siteConfig.contact.whatsapp}
                 variant="primary"
                 size="lg"
                 className="rounded-none"

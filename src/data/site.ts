@@ -10,6 +10,7 @@ export const siteConfig = {
     "A science communication production house weaving scientific values into storytelling that inspires curiosity, educates minds, and moves people.",
   contact: {
     email: "genkreativ@gmail.com",
+    whatsapp: "https://wa.link/yapx93",
     instagram: "@genkreativ",
     website: "https://www.genkreativ.id/",
     websiteLabel: "https://www.genkreativ.id/",
@@ -30,7 +31,7 @@ export const socialLinks: SocialLink[] = [
     label: "LinkedIn",
     href: "https://www.linkedin.com/company/gen-kreativ-production/about/",
   },
-  { platform: "whatsapp", label: "WhatsApp", href: "#" },
+  { platform: "whatsapp", label: "WhatsApp", href: "https://wa.link/yapx93" },
   { platform: "email", label: "Email", href: "#footer" },
   {
     platform: "youtube",

@@ -1,5 +1,6 @@
 import { readdirSync } from "node:fs";
 import path from "node:path";
+import Image from "next/image";
 import { FiChevronDown } from "react-icons/fi";
 import { BarHeading } from "@/components/ui/SectionHeading";
 import { PhotoStack } from "@/components/ui/PhotoStack";
@@ -7,6 +8,8 @@ import type { ImageAsset } from "@/types";
 
 const ABOUT_DIR = path.join(process.cwd(), "public", "assets", "about");
 const IMAGE_FILE = /\.(png|jpe?g|webp|avif)$/i;
+/** Decorative backdrop, not part of the photo stack. */
+const BACKDROP = "foto_blur_kiri.png";
 
 /**
  * Every photo in /public/assets/about, ordered by filename ("2.png" before
@@ -16,7 +19,9 @@ const IMAGE_FILE = /\.(png|jpe?g|webp|avif)$/i;
 function getAboutPhotos(): ImageAsset[] {
   let files: string[];
   try {
-    files = readdirSync(ABOUT_DIR).filter((file) => IMAGE_FILE.test(file));
+    files = readdirSync(ABOUT_DIR).filter(
+      (file) => IMAGE_FILE.test(file) && file !== BACKDROP,
+    );
   } catch {
     return [];
   }
@@ -38,6 +43,21 @@ export function AboutUs() {
       id="about"
       className="scroll-mt-24 relative flex min-h-screen flex-col justify-center overflow-hidden bg-ink py-20 lg:py-24"
     >
+      {/* Blurred set photo anchored to the left edge, fading out toward the copy */}
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 w-[55%] max-w-[720px] lg:w-[45%]"
+        aria-hidden="true"
+      >
+        <Image
+          src={`/assets/about/${BACKDROP}`}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 45vw, 55vw"
+          className="object-cover object-left opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/60 via-ink/70 to-ink" />
+      </div>
+
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-[#FFC24D] opacity-30 blur-[100px]" />
         <div className="absolute -right-20 top-10 h-96 w-96 rounded-full bg-[#793B92] opacity-35 blur-[120px]" />
@@ -74,10 +94,11 @@ export function AboutUs() {
           </p>
         </div>
 
+        {/* Source photos are 4:5 portrait — match that ratio so nothing is cropped. */}
         <PhotoStack
           photos={aboutPhotos}
-          className="aspect-[4/3] w-full"
-          sizes="(min-width: 1024px) 40vw, 100vw"
+          className="mx-auto aspect-[4/5] w-full max-w-[420px] lg:mr-0"
+          sizes="(min-width: 1024px) 420px, 100vw"
         />
       </div>
 

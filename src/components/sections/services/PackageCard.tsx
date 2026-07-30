@@ -62,7 +62,7 @@ export function PackageCard({ pkg }: { pkg: ServicePackage }) {
 
       <div className="relative mt-5">
         <Button
-          href={`mailto:${siteConfig.contact.email}`}
+          href={siteConfig.contact.whatsapp}
           variant="primary"
           size="sm"
           className="w-full"

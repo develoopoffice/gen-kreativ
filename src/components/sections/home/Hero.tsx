@@ -63,7 +63,7 @@ export function Hero() {
             OUR SERVICES
           </Button>
           <Button
-            href="/#contact"
+            href={siteConfig.contact.whatsapp}
             variant="primary"
             size="lg"
             className="shadow-[0_0_15px_2px_rgba(241,90,36,0.6)] hover:shadow-[0_0_20px_4px_rgba(241,90,36,0.8)]"

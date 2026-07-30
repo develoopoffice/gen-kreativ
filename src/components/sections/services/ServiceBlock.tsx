@@ -36,7 +36,7 @@ export function ServiceBlock({ block }: { block: ServiceBlockType }) {
 
         <div className="mt-7">
           <Button
-            href={`mailto:${siteConfig.contact.email}`}
+            href={siteConfig.contact.whatsapp}
             variant="primary"
             pill
           >
